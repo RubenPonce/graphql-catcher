@@ -4,26 +4,15 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { GraphQLScalarType } from "graphql";
 import dotenv from "dotenv";
 dotenv.config();
-const channels = [
-  {
-    channelId: "UCAgIOx-Wmvon7nWJiFTzRdg",
-    name: "Colorado Ped Patrol",
-    lastLive: "3 days ago",
-    mediaProvider: "YouTube",
-  },
-  {
-    channelId: "PredatorPoachers",
-    name: "Predator Poachers",
-    lastLive: "12 hours ago",
-    mediaProvider: "Rumble",
-  },
-  {
-    channelId: "UC_z833aw6yvHJ9QxGpphY3w",
-    name: "CCUNIT",
-    lastLive: "8 hours ago",
-    mediaProvider: "YouTube",
-  },
-];
+//@TODO enable cors and authorization
+//var express = require("express");
+//var cors = require("cors");
+//var app = express();
+//var corsOptions = {
+//  origin: "<insert uri of front-end domain>",
+//  credentials: true, // <-- REQUIRED backend setting
+//};
+//app.use(cors(corsOptions));
 const dateScalar = new GraphQLScalarType({
   name: "Date",
   parseValue(value: Date) {
@@ -50,6 +39,10 @@ const ChannelSchema = new Schema({
     type: Boolean,
     required: true,
   },
+  lastUrl: {
+    type: String,
+    required: false,
+  },
   mediaProvider: { type: String, required: true },
 });
 const Channel = mongoose.model("Channel", ChannelSchema);
@@ -66,12 +59,17 @@ const resolvers = {
         channelId: args.channelId,
         name: args.name,
         isLive: false,
+        lastUrl: "",
       });
       return channelObj.save().then((res) => res);
     },
     updateChannel: async (parent, args, context, info) => {
       const filter = { channelId: args.channelId };
-      const update = { lastLive: new Date(), isLive: args.isLive };
+      const update = {
+        lastLive: new Date(),
+        isLive: args.isLive,
+        lastUrl: args.vidUrl,
+      };
       return await Channel.findOneAndUpdate(filter, update, {
         returnOriginal: false,
       });
@@ -86,7 +84,6 @@ mongoose.connect(`${secret}`).then(() => {
 // that together define the "shape" of queries that are executed against
 // your data.
 const typeDefs = `#graphql
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
   scalar Date
 
   type MyType {
@@ -95,9 +92,10 @@ const typeDefs = `#graphql
   input Channel {
     channelId: String
     name: String
-    lastLive: Date,
+    lastLive: Date
     mediaProvider: String
     isLive: Boolean
+    lastUrl: String
   }
   type Channel {
     channelId: String
@@ -107,14 +105,12 @@ const typeDefs = `#graphql
     isLive: Boolean
   }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
   type Query {
     channels: [Channel]
   }
   type Mutation{
     createChannel(name: String, channelId: String, mp: String): Channel 
-    updateChannel(channelId: String, isLive: Boolean): Channel 
+    updateChannel(channelId: String, isLive: Boolean, vidUrl: String): Channel 
   } 
 `;
 // The ApolloServer constructor requires two parameters: your schema
