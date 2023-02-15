@@ -3,6 +3,7 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { GraphQLScalarType } from "graphql";
 import dotenv from "dotenv";
+import { log } from "console";
 dotenv.config();
 //@TODO enable cors and authorization
 //var express = require("express");
@@ -13,15 +14,6 @@ dotenv.config();
 //  credentials: true, // <-- REQUIRED backend setting
 //};
 //app.use(cors(corsOptions));
-const dateScalar = new GraphQLScalarType({
-  name: "Date",
-  parseValue(value: Date) {
-    return new Date(value);
-  },
-  serialize(value: Date) {
-    return new Date(value).toISOString();
-  },
-});
 const ChannelSchema = new Schema({
   channelId: {
     type: String,
@@ -47,12 +39,11 @@ const ChannelSchema = new Schema({
 });
 const Channel = mongoose.model("Channel", ChannelSchema);
 const resolvers = {
-  Date: dateScalar,
   Query: {
     channels: async () => await Channel.find(),
   },
   Mutation: {
-    createChannel(parent, args, context, info) {
+    createChannel: async (parent, args, context, info) => {
       const channelObj = new Channel({
         lastLive: new Date(),
         mediaProvider: args.mp,
@@ -61,15 +52,30 @@ const resolvers = {
         isLive: false,
         lastUrl: "",
       });
-      return channelObj.save().then((res) => res);
+      return await channelObj.save().then((res) => res);
     },
     updateChannel: async (parent, args, context, info) => {
       const filter = { channelId: args.channelId };
-      const update = {
-        lastLive: new Date(),
-        isLive: args.isLive,
-        lastUrl: args.vidUrl,
+      let options: Intl.DateTimeFormatOptions = {
+        timeZone: "America/New_York",
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
       };
+      const formatter = new Intl.DateTimeFormat([], options);
+
+      const eastDate = formatter.format(new Date());
+      //change vidUrl only if a new vidUrl is passed
+      const update = args.vidUrl
+        ? {
+            lastLive: eastDate,
+            isLive: args.isLive,
+            lastUrl: args.vidUrl,
+          }
+        : { lastLive: new Date().toISOString(), isLive: args.isLive };
       return await Channel.findOneAndUpdate(filter, update, {
         returnOriginal: false,
       });
@@ -92,7 +98,7 @@ const typeDefs = `#graphql
   input Channel {
     channelId: String
     name: String
-    lastLive: Date
+    lastLive: string
     mediaProvider: String
     isLive: Boolean
     lastUrl: String
@@ -100,7 +106,7 @@ const typeDefs = `#graphql
   type Channel {
     channelId: String
     name: String
-    lastLive: Date
+    lastLive: string
     mediaProvider: String
     isLive: Boolean
   }
