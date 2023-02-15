@@ -56,7 +56,7 @@ const resolvers = {
     },
     updateChannel: async (parent, args, context, info) => {
       const filter = { channelId: args.channelId };
-      let options: Intl.DateTimeFormatOptions = {
+      const options: Intl.DateTimeFormatOptions = {
         timeZone: "America/New_York",
         year: "numeric",
         month: "numeric",
@@ -98,7 +98,7 @@ const typeDefs = `#graphql
   input Channel {
     channelId: String
     name: String
-    lastLive: string
+    lastLive: String
     mediaProvider: String
     isLive: Boolean
     lastUrl: String
@@ -106,7 +106,7 @@ const typeDefs = `#graphql
   type Channel {
     channelId: String
     name: String
-    lastLive: string
+    lastLive: String
     mediaProvider: String
     isLive: Boolean
   }
