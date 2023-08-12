@@ -3,6 +3,8 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { GraphQLScalarType } from "graphql";
 import dotenv from "dotenv";
+import {mutations} from "../src/mutations/index.js";
+import {queries} from "../src/queries/index.js";
 dotenv.config();
 //TODO enable cors and authorization
 //var express = require("express");
@@ -43,37 +45,18 @@ const ChannelSchema = new Schema({
         type: String,
         required: false,
     },
-    mediaProvider: { type: String, required: true },
+    socials: [{
+        mediaProvider: { type: String, required: true }
+    }],
 });
 const Channel = mongoose.model("Channel", ChannelSchema);
 const resolvers = {
     Date: dateScalar,
     Query: {
-        channels: async () => await Channel.find(),
+        ...queries
     },
     Mutation: {
-        createChannel(parent, args, context, info) {
-            const channelObj = new Channel({
-                lastLive: new Date(),
-                mediaProvider: args.mp,
-                channelId: args.channelId,
-                name: args.name,
-                isLive: false,
-                lastUrl: "",
-            });
-            return channelObj.save().then((res) => res);
-        },
-        updateChannel: async (parent, args, context, info) => {
-            const filter = { channelId: args.channelId };
-            const update = {
-                lastLive: new Date(),
-                isLive: args.isLive,
-                lastUrl: args.vidUrl,
-            };
-            return await Channel.findOneAndUpdate(filter, update, {
-                returnOriginal: false,
-            });
-        },
+...mutations
     },
 };
 const secret = process.env.secretdb;

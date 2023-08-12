@@ -1,7 +1,11 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import dotenv from "dotenv";
+import {queries} from "./queries"
+import {mutations} from "./mutations"
+import {ChannelSchema} from "./schemas/ChannelSchema"
+import {readFileSync} from "fs";
 dotenv.config();
 //@TODO enable cors and authorization
 //var express = require("express");
@@ -23,104 +27,19 @@ const options: Intl.DateTimeFormatOptions = {
   second: "numeric",
 };
 const formatter = new Intl.DateTimeFormat([], options);
-
-const ChannelSchema = new Schema({
-  channelId: {
-    type: String,
-    required: true,
-  },
-  name: {
-    type: String,
-    required: false,
-  },
-  // last time a channel went live
-  lastLive: {
-    type: String,
-    required: false,
-  },
-  // is currently live
-  isLive: {
-    type: Boolean,
-    required: true,
-  },
-  //last url from lastLive time
-  lastUrl: {
-    type: String,
-    required: false,
-  },
-  //platform that the live was streamed on
-  mediaProvider: { type: String, required: true },
-});
-const Channel = mongoose.model("Channel", ChannelSchema);
 const resolvers = {
   Query: {
-    channels: async () => await Channel.find(),
+    ...queries,
   },
   Mutation: {
-    createChannel: async (parent, args, context, info) => {
-      const eastDate = formatter.format(new Date());
-      const channelObj = new Channel({
-        lastLive: eastDate,
-        mediaProvider: args.mp,
-        channelId: args.channelId,
-        name: args.name,
-        isLive: false,
-        lastUrl: "",
-      });
-      return await channelObj.save().then((res) => res);
-    },
-    updateChannel: async (parent, args, context, info) => {
-      const filter = { channelId: args.channelId };
-
-      const eastDate = formatter.format(new Date());
-      //change vidUrl only if a new vidUrl is passed
-      const update = args.vidUrl
-        ? {
-            lastLive: eastDate,
-            isLive: args.isLive,
-            lastUrl: args.vidUrl,
-          }
-        : { lastLive: eastDate, isLive: args.isLive };
-      return await Channel.findOneAndUpdate(filter, update, {
-        returnOriginal: false,
-      });
-    },
+...mutations,
   },
 };
 mongoose.connect(`${secret}`).then(() => {
   console.log("MongoDB connected successfully");
 });
 //@TODO integrate these types with typescript
-const typeDefs = `#graphql
-  scalar Date
-
-  type MyType {
-       created: Date
-  }
-  input Channel {
-    channelId: String
-    name: String
-    lastLive: String
-    mediaProvider: String
-    isLive: Boolean
-    lastUrl: String
-  }
-  type Channel {
-    channelId: String
-    name: String
-    lastLive: String
-    mediaProvider: String
-    isLive: Boolean
-  }
-
-  type Query {
-    channels: [Channel]
-  }
-  type Mutation{
-    createChannel(name: String, channelId: String, mp: String): Channel 
-    updateChannel(channelId: String, isLive: Boolean, vidUrl: String): Channel 
-  } 
-`;
+const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' });
 
 const server = new ApolloServer({
   typeDefs,

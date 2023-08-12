@@ -1,0 +1,32 @@
+scalar Date
+  type MyType {
+       created: Date
+  }
+  input Channel {
+    channelId: String
+    name: String
+    lastLive: String
+    mediaProvider: String
+    isLive: Boolean
+    lastUrl: String
+  }
+    type mediaProvider {
+    provider: String
+    url: String
+    isLive: Boolean
+    }
+  type Channel {
+    channelId: String
+    name: String
+    lastLive: String
+    socials: [mediaProvider]
+    isLive: Boolean
+  }
+
+  type Query {
+    channels: [Channel]
+  }
+  type Mutation{
+    createChannel(name: String, channelId: String, mp: String): Channel
+    updateChannel(channelId: String, isLive: Boolean, vidUrl: String): Channel
+  }

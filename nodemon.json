@@ -1,7 +1,8 @@
 {
-      "env": {
-                "mongoDatabase": "fds"
-                        "mongoUserName": "<YOUR USERNAME>",
-                                "mongoUserPassword": "<YOUR PASSWORD>"
-                                    }
-}
+  "verbose": true,
+  "ignore": ["*.test.js", "**/fixtures/**"],
+  "execMap": {
+    "rb": "ruby",
+    "pde": "processing --sketch={{pwd}} --run"
+  }
+}
