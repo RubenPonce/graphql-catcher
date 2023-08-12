@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
+import {readFileSync} from "fs";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import dotenv from "dotenv";
-import {queries} from "./queries"
-import {mutations} from "./mutations"
-import {ChannelSchema} from "./schemas/ChannelSchema"
-import {readFileSync} from "fs";
+import {resolvers} from "./resolvers/resolver";
 dotenv.config();
 //@TODO enable cors and authorization
 //var express = require("express");
@@ -27,14 +25,7 @@ const options: Intl.DateTimeFormatOptions = {
   second: "numeric",
 };
 const formatter = new Intl.DateTimeFormat([], options);
-const resolvers = {
-  Query: {
-    ...queries,
-  },
-  Mutation: {
-...mutations,
-  },
-};
+
 mongoose.connect(`${secret}`).then(() => {
   console.log("MongoDB connected successfully");
 });
