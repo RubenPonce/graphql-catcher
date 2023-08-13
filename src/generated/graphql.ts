@@ -150,9 +150,9 @@ export type StatusInput = {
 };
 
 export type UpdateChannelInput = {
-  content?: InputMaybe<Array<ContentInput>>;
+  content?: InputMaybe<Array<InputMaybe<ContentInput>>>;
   name?: InputMaybe<Scalars['String']['input']>;
-  socials?: InputMaybe<Array<SocialInput>>;
+  socials?: InputMaybe<Array<InputMaybe<SocialInput>>>;
   status?: InputMaybe<StatusInput>;
 };
 

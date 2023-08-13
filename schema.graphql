@@ -17,6 +17,7 @@ type BanStatus {
 type Social {
     name: String!
     url: String!
+    channelId: String
 }
 
 type Content {
@@ -67,6 +68,7 @@ input BanStatusInput {
 input SocialInput {
     name: String!
     url: String!
+    channelId: String
 }
 
 input ContentInput {
@@ -86,14 +88,14 @@ input CreateChannelInput {
     name: String
     status: StatusInput
     socials: [SocialInput!]!
-    content: [ContentInput!]!
+    content: [ContentInput!]
 }
 
 input UpdateChannelInput {
     name: String
     status: StatusInput
-    socials: [SocialInput!]
-    content: [ContentInput!]
+    socials: [SocialInput]
+    content: [ContentInput]
 }
 type Query {
     channels: [Channel]

@@ -24,6 +24,7 @@ export const ChannelSchema = new Schema({
     socials: [{
         name: {type: String, required: true},
         url: {type: String, required: true},
+        channelId: {type: String, required: false},
     }],
     //uplosded content
     content: [{

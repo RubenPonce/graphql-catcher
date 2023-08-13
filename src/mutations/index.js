@@ -1,29 +1,15 @@
 import {ChannelModel} from "../models/ChannelModel.js";
 
 export const mutations = {
+    createChannel: async (parent, args, context, info) => {
+        const newChannel = new ChannelModel(args.channel);
+        return newChannel.save();
+    },
     updateChannel: async (parent, args, context, info) => {
         const {input, channelId} = args; // assuming the update data is nested under an 'input' field in the args
         console.log("input", input, "channelId", channelId)
         const filter = {channelId};
-        const update = {
-            name: input.name,
-            status: {
-                live: {
-                    isLive: input.status.live.isLive,
-                    title: input.status.live.title,
-                    url: input.status.live.url,
-                },
-                bans: {
-                    isBanned: input.status.bans.isBanned,
-                    reason: input.status.bans.reason,
-                    mediaProviderForBan: input.status.bans.mediaProviderForBan,
-                },
-            },
-            socials: input.socials,
-            content: input.content,
-        };
-
-        return ChannelModel.findOneAndUpdate(filter, update, {
+        return ChannelModel.findOneAndUpdate(filter, {$set: input}, {
             returnOriginal: false,
         });
     },
@@ -33,6 +19,6 @@ export const mutations = {
         const update = {
             socials: args.socials,
         }
-    }
+    },
 
 }
