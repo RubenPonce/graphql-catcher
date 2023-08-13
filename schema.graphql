@@ -1,32 +1,104 @@
 scalar Date
-  type MyType {
-       created: Date
-  }
-  input Channel {
-    channelId: String
-    name: String
-    lastLive: String
-    mediaProvider: String
-    isLive: Boolean
-    lastUrl: String
-  }
-    type mediaProvider {
-    provider: String
+type MyType {
+    created: Date
+}
+type LiveStatus {
+    isLive: Boolean!
+    title: String
     url: String
-    isLive: Boolean
-    }
-  type Channel {
-    channelId: String
-    name: String
-    lastLive: String
-    socials: [mediaProvider]
-    isLive: Boolean
-  }
+}
 
-  type Query {
+type BanStatus {
+    isBanned: Boolean!
+    reason: String
+    mediaProviderForBan: String
+}
+
+type Social {
+    name: String!
+    url: String!
+}
+
+type Content {
+    title: String!
+    url: String!
+    image: String
+    date: String!
+}
+
+type Channel {
+    channelId: String!
+    name: String
+    status: Status
+    socials: [Social!]!
+    content: [Content!]!
+}
+
+type Status {
+    live: LiveStatus
+    bans: BanStatus
+}
+
+# Query and Mutation Types
+type Query {
+    getChannel(channelId: String!): Channel
+    getAllChannels: [Channel!]!
+}
+
+type Mutation {
+    createChannel(channel: CreateChannelInput!): Channel!
+    updateChannel(channelId: String!, input: UpdateChannelInput!): Channel!
+    deleteChannel(channelId: String!): Channel!
+    latestContent(channelId: String!): Content!
+}
+
+input LiveStatusInput {
+    isLive: Boolean
+    title: String
+    url: String
+}
+
+input BanStatusInput {
+    isBanned: Boolean
+    reason: String
+    mediaProviderForBan: String
+}
+
+input SocialInput {
+    name: String!
+    url: String!
+}
+
+input ContentInput {
+    title: String!
+    url: String!
+    image: String
+    date: String!
+}
+
+input StatusInput {
+    live: LiveStatusInput
+    bans: BanStatusInput
+}
+
+input CreateChannelInput {
+    channelId: String!
+    name: String
+    status: StatusInput
+    socials: [SocialInput!]!
+    content: [ContentInput!]!
+}
+
+input UpdateChannelInput {
+    name: String
+    status: StatusInput
+    socials: [SocialInput!]
+    content: [ContentInput!]
+}
+type Query {
     channels: [Channel]
-  }
-  type Mutation{
+}
+type Mutation{
     createChannel(name: String, channelId: String, mp: String): Channel
     updateChannel(channelId: String, isLive: Boolean, vidUrl: String): Channel
-  }
+}

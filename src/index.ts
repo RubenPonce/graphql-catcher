@@ -28,7 +28,10 @@ const formatter = new Intl.DateTimeFormat([], options);
 
 mongoose.connect(`${secret}`).then(() => {
   console.log("MongoDB connected successfully");
-});
+}).catch((err) => {
+  console.log("unable to connect to MongoDB")
+  console.log(err);
+})
 //@TODO integrate these types with typescript
 const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' });
 
