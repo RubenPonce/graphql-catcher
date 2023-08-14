@@ -42,10 +42,10 @@ export type Channel = {
 
 export type Content = {
   __typename?: 'Content';
-  date: Scalars['String']['output'];
+  date?: Maybe<Scalars['String']['output']>;
   image?: Maybe<Scalars['String']['output']>;
-  title: Scalars['String']['output'];
-  url: Scalars['String']['output'];
+  title?: Maybe<Scalars['String']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 export type ContentInput = {
@@ -57,7 +57,7 @@ export type ContentInput = {
 
 export type CreateChannelInput = {
   channelId: Scalars['String']['input'];
-  content: Array<ContentInput>;
+  content?: InputMaybe<Array<ContentInput>>;
   name?: InputMaybe<Scalars['String']['input']>;
   socials: Array<SocialInput>;
   status?: InputMaybe<StatusInput>;
@@ -80,7 +80,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createChannel: Channel;
   deleteChannel: Channel;
-  latestContent: Content;
+  latestContent?: Maybe<Content>;
   updateChannel: Channel;
 };
 
@@ -94,11 +94,6 @@ export type MutationCreateChannelArgs = {
 
 
 export type MutationDeleteChannelArgs = {
-  channelId: Scalars['String']['input'];
-};
-
-
-export type MutationLatestContentArgs = {
   channelId: Scalars['String']['input'];
 };
 
@@ -120,6 +115,7 @@ export type Query = {
   channels?: Maybe<Array<Maybe<Channel>>>;
   getAllChannels: Array<Channel>;
   getChannel?: Maybe<Channel>;
+  getLatestContent: Array<Content>;
 };
 
 
@@ -129,11 +125,13 @@ export type QueryGetChannelArgs = {
 
 export type Social = {
   __typename?: 'Social';
+  channelId?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   url: Scalars['String']['output'];
 };
 
 export type SocialInput = {
+  channelId?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   url: Scalars['String']['input'];
 };
@@ -342,10 +340,10 @@ export type ChannelResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type ContentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Content'] = ResolversParentTypes['Content']> = {
-  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -363,7 +361,7 @@ export type LiveStatusResolvers<ContextType = any, ParentType extends ResolversP
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationCreateChannelArgs, 'channel'>>;
   deleteChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationDeleteChannelArgs, 'channelId'>>;
-  latestContent?: Resolver<ResolversTypes['Content'], ParentType, ContextType, RequireFields<MutationLatestContentArgs, 'channelId'>>;
+  latestContent?: Resolver<Maybe<ResolversTypes['Content']>, ParentType, ContextType>;
   updateChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationUpdateChannelArgs, 'input'>>;
 };
 
@@ -376,9 +374,11 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   channels?: Resolver<Maybe<Array<Maybe<ResolversTypes['Channel']>>>, ParentType, ContextType>;
   getAllChannels?: Resolver<Array<ResolversTypes['Channel']>, ParentType, ContextType>;
   getChannel?: Resolver<Maybe<ResolversTypes['Channel']>, ParentType, ContextType, RequireFields<QueryGetChannelArgs, 'channelId'>>;
+  getLatestContent?: Resolver<Array<ResolversTypes['Content']>, ParentType, ContextType>;
 };
 
 export type SocialResolvers<ContextType = any, ParentType extends ResolversParentTypes['Social'] = ResolversParentTypes['Social']> = {
+  channelId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

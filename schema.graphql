@@ -21,10 +21,10 @@ type Social {
 }
 
 type Content {
-    title: String!
-    url: String!
+    title: String
+    url: String
     image: String
-    date: String!
+    date: String
 }
 
 type Channel {
@@ -44,13 +44,14 @@ type Status {
 type Query {
     getChannel(channelId: String!): Channel
     getAllChannels: [Channel!]!
+    getLatestContent: [Content!]!
 }
 
 type Mutation {
     createChannel(channel: CreateChannelInput!): Channel!
     updateChannel(channelId: String!, input: UpdateChannelInput!): Channel!
     deleteChannel(channelId: String!): Channel!
-    latestContent(channelId: String!): Content!
+    latestContent: Content
 }
 
 input LiveStatusInput {

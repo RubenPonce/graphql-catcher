@@ -4,6 +4,7 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import dotenv from "dotenv";
 import {resolvers} from "./resolvers/resolver";
+import {InMemoryLRUCache} from "apollo-server-caching";
 dotenv.config();
 //@TODO enable cors and authorization
 //var express = require("express");
@@ -15,17 +16,6 @@ dotenv.config();
 //};
 //app.use(cors(corsOptions));
 const secret = process.env.secretdb;
-const options: Intl.DateTimeFormatOptions = {
-  timeZone: "America/New_York",
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-  second: "numeric",
-};
-const formatter = new Intl.DateTimeFormat([], options);
-
 mongoose.connect(`${secret}`).then(() => {
   console.log("MongoDB connected successfully");
 }).catch((err) => {
@@ -38,6 +28,7 @@ const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' });
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  cache: new InMemoryLRUCache()
 });
 
 // Passing an ApolloServer instance to the `startStandaloneServer` function:
