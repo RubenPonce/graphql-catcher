@@ -2,13 +2,21 @@ import {ChannelModel} from "../models/ChannelModel.js";
 import {ContentModel} from "../models/ContentModel.js";
 import {ContentSchema} from "../schemas/ContentSchema.js";
 
-async function insertUniqueContent(content) {
+async function insertUniqueContent(contentToInsert) {
     try {
-        await ContentModel.findOne({url: content.url});
+        console.log("checking if content exists", contentToInsert.url);
+        const content = await ContentModel.findOne({url: contentToInsert.url});
+        console.log({content});
+        if (!content) {
+            console.log("inserting content", contentToInsert.url);
+            await ContentModel.create(contentToInsert);
+        }
     } catch (e) {
-        await ContentModel.create(content);
+        console.log("inserting content", contentToInsert.url);
+        await ContentModel.create(contentToInsert);
     }
 }
+
 
 export const mutations = {
     createChannel: async (parent, args, context, info) => {
@@ -30,6 +38,7 @@ export const mutations = {
                 if (updatedContent.length > 15) {
                     updatedContent = updatedContent.slice(-15);
                 }
+                console.log("updating 'content'")
                 updateData.content = updatedContent;
             }
 
@@ -39,28 +48,34 @@ export const mutations = {
                 updatedSocials = updatedSocials.filter((social, index, self) =>
                     index === self.findIndex((s) => s.id === social.id)
                 );
-
+                console.log("updating 'socials'")
                 updateData.socials = updatedSocials;
             }
 
             return ChannelModel.findOneAndUpdate(filter, {$set: updateData}, {
                 returnOriginal: false,
+            }).catch((error) => {
+                console.error('Failed to update channel:', error);
             });
         } else {
             throw new Error(`Channel with ID ${channelId} not found`);
         }
     },
+    /**
+     * gets the latest content from all channels and inserts it into the database.
+     * @returns {Promise<*>}
+     */
     latestContent: async () => {
+        console.log("getting latest content")
         const allChannels = await ChannelModel.find();
         const allContent = allChannels.reduce((acc, channel) => {
             return acc.concat(channel.content);
         }, []);
         const sortedContent = allContent.sort((a, b) => new Date(b.date) - new Date(a.date));
-        console.log(allContent)
-        //ContentModel.insertMany(sortedContent, {ordered: false});
         for (let content of sortedContent) {
             await insertUniqueContent(content);
         }
+        console.log("fetched and inserted content", sortedContent.length, sortedContent[0].date)
         return sortedContent;
 
     }

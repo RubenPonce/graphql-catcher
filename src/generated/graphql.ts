@@ -413,5 +413,3 @@ export type DirectiveResolvers<ContextType = any> = {
   embedded?: EmbeddedDirectiveResolver<any, any, ContextType>;
   map?: MapDirectiveResolver<any, any, ContextType>;
 };
-
-import { ObjectId } from 'mongodb';
