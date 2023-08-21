@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import AWS from "aws-sdk";
 import {readFileSync} from "fs";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
@@ -15,7 +16,22 @@ dotenv.config();
 //  credentials: true
 //};
 //app.use(cors(corsOptions));
-const secret = process.env.secretdb;
+
+
+let secret = process.env.secretdb;
+if (!secret && process.env.NODE_ENV === 'production') {
+  const ssmClient = new AWS.SSM({
+    region: 'us-east-1'
+  });
+  ssmClient.getParameter({
+    Name: `/node/secretdb`,
+    WithDecryption: true,
+  }, (err, data) => {
+    if (data?.Parameter) {
+      secret = data.Parameter.Value;
+    }
+  });
+}
 mongoose.connect(`${secret}`).then(() => {
   console.log("MongoDB connected successfully");
 }).catch((err) => {
