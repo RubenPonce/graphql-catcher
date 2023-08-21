@@ -1,13 +1,11 @@
 import {ChannelModel} from "../models/ChannelModel.js";
 import {ContentModel} from "../models/ContentModel.js";
-import {ContentSchema} from "../schemas/ContentSchema.js";
 
 async function insertUniqueContent(contentToInsert) {
     try {
         console.log("checking if content exists", contentToInsert.url);
-        const content = await ContentModel.findOne({url: contentToInsert.url});
-        console.log({content});
-        if (!content) {
+        const isDuplicate = await !!ContentModel.findOne({url: contentToInsert.url});
+        if (!isDuplicate) {
             console.log("inserting content", contentToInsert.url);
             await ContentModel.create(contentToInsert);
         }
@@ -25,6 +23,9 @@ export const mutations = {
     },
     updateChannel: async (parent, args, context, info) => {
         const {input, channelId} = args;
+        if (!input || !channelId) {
+            throw new Error("property input or channelId missing");
+        }
         const filter = {channelId};
 
         const channel = await ChannelModel.findOne(filter);
@@ -75,7 +76,7 @@ export const mutations = {
         for (let content of sortedContent) {
             await insertUniqueContent(content);
         }
-        console.log("fetched and inserted content", sortedContent.length, sortedContent[0].date)
+        console.log("fetched and inserted content", sortedContent.length, "items with latest date of:", sortedContent[0].date)
         return sortedContent;
 
     }
