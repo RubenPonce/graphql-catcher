@@ -36,15 +36,12 @@ const server = new ApolloServer({
 });
 
 await server.start();
-
-app.use(express.json());
-app.use('/graphql', expressMiddleware(server));
-
-
-// Enable CORS for your domain
 app.use(cors({
     origin: ["https://catcher.tv", "http://localhost:4000", "https://studio.apollographql.com", "http://localhost:3000"]
 }));
+app.use(express.json());
+app.use('/graphql', expressMiddleware(server));
+
 
 await new Promise<void>((resolve) => httpServer.listen({port: 4000}, resolve));
 console.log(`🚀  Server ready at http://localhost:4000/graphql`);
