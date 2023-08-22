@@ -4,7 +4,7 @@
 
 
 
-A GraphQL NodeJS server for delivering content to the frontend of Catcher. 
+A GraphQL NodeJS server for delivering content to the frontend of Catcher. Delivers content to the frontend of [Catcher](https://github.com/RubenPonce/catcherwall)([https://catcher.tv](https://catcher.tv)). Also communicates with the [Poller](https://github.com/RubenPonce/pollerexplosionservice] to update content and write/read from MongoDB.
 
 
 ## Installation
