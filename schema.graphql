@@ -30,6 +30,7 @@ type Content {
 type Channel {
     channelId: String!
     name: String
+    timeOfLastUpdate: String
     status: Status
     socials: [Social!]!
     content: [Content!]!

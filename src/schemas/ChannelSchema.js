@@ -4,6 +4,10 @@ export const ChannelSchema = new Schema({
         type: String,
         required: true,
     },
+    timeOfLastUpdate: {
+        type: String,
+        required: false,
+    },
     name: {
         type: String,
         required: false,

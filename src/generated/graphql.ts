@@ -38,6 +38,7 @@ export type Channel = {
   name?: Maybe<Scalars['String']['output']>;
   socials: Array<Social>;
   status?: Maybe<Status>;
+  timeOfLastUpdate?: Maybe<Scalars['String']['output']>;
 };
 
 export type Content = {
@@ -336,6 +337,7 @@ export type ChannelResolvers<ContextType = any, ParentType extends ResolversPare
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   socials?: Resolver<Array<ResolversTypes['Social']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['Status']>, ParentType, ContextType>;
+  timeOfLastUpdate?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -413,3 +415,5 @@ export type DirectiveResolvers<ContextType = any> = {
   embedded?: EmbeddedDirectiveResolver<any, any, ContextType>;
   map?: MapDirectiveResolver<any, any, ContextType>;
 };
+
+import {ObjectId} from 'mongodb';

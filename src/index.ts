@@ -37,7 +37,7 @@ const server = new ApolloServer({
 
 await server.start();
 app.use(cors({
-    origin: ["https://catcher.tv", "http://localhost:4000", "https://studio.apollographql.com", "http://localhost:3000"]
+    origin: ["https://catcher.tv", "https://www.catcher.tv", "http://localhost:4000", "https://studio.apollographql.com", "http://localhost:3000"]
 }));
 app.use(express.json());
 app.use('/graphql', expressMiddleware(server));
