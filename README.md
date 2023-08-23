@@ -4,7 +4,11 @@
 
 
 
-A GraphQL NodeJS server for delivering content to the frontend of Catcher. Delivers content to the frontend of [Catcher](https://github.com/RubenPonce/catcherwall)([https://catcher.tv](https://catcher.tv)). Also communicates with the [Poller](https://github.com/RubenPonce/pollerexplosionservice) to update content and write/read from MongoDB.
+A GraphQL NodeJS server for delivering content to the frontend of Catcher. Delivers content to the frontend of [https://catcher.tv](https://catcher.tv).
+
+Frontend: [Catcher](https://github.com/RubenPonce/catcherwall) - A React application
+
+Service: [Poller](https://github.com/RubenPonce/pollerexplosionservice) - A simple NodeJS application that can be ran in AWS Lambda to provide updates to **this** GraphQL server.
 
 
 ## Installation
