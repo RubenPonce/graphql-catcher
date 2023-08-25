@@ -98,5 +98,14 @@ export const mutations = {
         console.log("fetched and inserted content", sortedContent.length, "items with latest date of:", sortedContent[0].date);
         return sortedContent;
     }
+    ,
+    deleteSocial: async (parent, args, context, info) => {
+        const {channelId, socialId} = args;
+        await ChannelModel.updateOne(
+            {channelId: channelId},
+            {$pull: {socials: {channelId: socialId}, $set: {content: []}}}
+        );
+        return true;
+    }
 
 }
