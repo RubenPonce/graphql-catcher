@@ -30,6 +30,7 @@
     "graphql-compose": "^9.0.10",
     "graphql-compose-mongoose": "^9.8.0",
     "graphql-tag": "^2.12.6",
+    "jsonwebtoken": "^9.0.1",
     "mongodb": "4.1",
     "mongoose": "^7.4.3",
     "ts-node": "^10.9.1",

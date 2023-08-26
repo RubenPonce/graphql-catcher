@@ -53,6 +53,7 @@ type Mutation {
     updateChannel(channelId: String!, input: UpdateChannelInput!): Channel!
     deleteChannel(channelId: String!): Channel!
     latestContent: Content
+    deleteSocial(channelId: String!, socialId: String!): Boolean
 }
 
 input LiveStatusInput {
@@ -101,8 +102,4 @@ input UpdateChannelInput {
 }
 type Query {
     channels: [Channel]
-}
-type Mutation{
-    createChannel(name: String, channelId: String, mp: String): Channel
-    updateChannel(channelId: String, isLive: Boolean, vidUrl: String): Channel
 }

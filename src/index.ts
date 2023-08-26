@@ -6,17 +6,42 @@ import { ApolloServer } from "@apollo/server";
 import {expressMiddleware} from "@apollo/server/express4";
 import {ApolloServerPluginDrainHttpServer} from '@apollo/server/plugin/drainHttpServer';
 import http from "http";
-import * as pkg from "body-parser"
-
+import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
-import {resolvers} from "./resolvers/resolver";
 import {InMemoryLRUCache} from "apollo-server-caching";
+import {parse} from "graphql/language";
 
+import {resolvers} from "./resolvers/resolver";
 dotenv.config();
+const SECRET_KEY = process.env.secretkey
+const auth_token = jwt.sign({role: 'ADMIN'}, SECRET_KEY);
+console.log('auth_token:', auth_token);
+const authenticate = (req, res, next) => {
+    const token = req.headers.authorization;
+    try {
+        req.user = jwt.verify(token, SECRET_KEY);
+    } catch (err) {
+        req.user = {role: "normie"}
+    }
+
+    const query = req.body.query;
+    if (query) {
+        const ast = parse(query);
+        //@ts-ignore
+        const operationTypes = ast.definitions.map(def => def.operation);
+
+        if (operationTypes.includes('mutation')) {
+            if (!req.user || req.user.role !== 'ADMIN') {
+                return res.status(403).json({error: 'Not authorized for mutation'});
+            }
+        }
+    }
+    next();
+};
+
 
 const app = express();
 const httpServer = http.createServer(app);
-const {json} = pkg;
 
 const secret = process.env.secretdb;
 mongoose.connect(`${secret}`).then(() => {
@@ -32,7 +57,8 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
     cache: new InMemoryLRUCache(),
-    plugins: [ApolloServerPluginDrainHttpServer({httpServer})]
+    // @ts-ignore
+    plugins: [ApolloServerPluginDrainHttpServer({httpServer})],
 });
 
 await server.start();
@@ -40,6 +66,7 @@ app.use(cors({
     origin: ["https://catcher.tv", "https://www.catcher.tv", "http://localhost:4000", "https://studio.apollographql.com", "http://localhost:3000"]
 }));
 app.use(express.json());
+app.use(authenticate)
 app.use('/graphql', expressMiddleware(server));
 
 
