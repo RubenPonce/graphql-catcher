@@ -1,6 +1,5 @@
 import {ChannelModel} from "../models/ChannelModel.js";
 import {ContentModel} from "../models/ContentModel.js";
-import {log} from "util";
 
 async function insertUniqueContent(contentToInsert) {
     try {
@@ -16,7 +15,6 @@ async function insertUniqueContent(contentToInsert) {
         }
     } catch (e) {
         console.error("error checking or inserting content", contentToInsert.url, e);
-        // Handle specific errors here if needed
     }
 }
 
@@ -97,8 +95,7 @@ export const mutations = {
         await ContentModel.insertMany(sortedContent);
         console.log("fetched and inserted content", sortedContent.length, "items with latest date of:", sortedContent[0].date);
         return sortedContent;
-    }
-    ,
+    },
     deleteSocial: async (parent, args, context, info) => {
         const {channelId, socialId} = args;
         await ChannelModel.updateOne(
@@ -106,6 +103,5 @@ export const mutations = {
             {$pull: {socials: {channelId: socialId}, $set: {content: []}}}
         );
         return true;
-    }
-
+    },
 }

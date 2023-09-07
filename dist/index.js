@@ -5,16 +5,8 @@ import { GraphQLScalarType } from "graphql";
 import dotenv from "dotenv";
 import {mutations} from "../src/mutations/index.js";
 import {queries} from "../src/queries/index.js";
+
 dotenv.config();
-//TODO enable cors and authorization
-//var express = require("express");
-//var cors = require("cors");
-//var app = express();
-//var corsOptions = {
-//  origin: "<insert uri of front-end domain>",
-//  credentials: true, // <-- REQUIRED backend setting
-//};
-//app.use(cors(corsOptions));
 const dateScalar = new GraphQLScalarType({
     name: "Date",
     parseValue(value) {

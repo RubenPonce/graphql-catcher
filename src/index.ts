@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {readFileSync} from "fs";
 import express from 'express';
 import cors from 'cors';
-import { ApolloServer } from "@apollo/server";
+import {ApolloServer} from "@apollo/server";
 import {expressMiddleware} from "@apollo/server/express4";
 import {ApolloServerPluginDrainHttpServer} from '@apollo/server/plugin/drainHttpServer';
 import http from "http";
@@ -15,6 +15,7 @@ import {resolvers} from "./resolvers/resolver";
 dotenv.config();
 const SECRET_KEY = process.env.secretkey
 const auth_token = jwt.sign({role: 'ADMIN'}, SECRET_KEY);
+
 console.log('auth_token:', auth_token);
 const authenticate = (req, res, next) => {
     const token = req.headers.authorization;
@@ -23,6 +24,7 @@ const authenticate = (req, res, next) => {
     } catch (err) {
         req.user = {role: "normie"}
     }
+    console.log('req.user:', req.user);
 
     const query = req.body.query;
     if (query) {
@@ -52,6 +54,7 @@ mongoose.connect(`${secret}`).then(() => {
 });
 
 const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' });
+
 
 const server = new ApolloServer({
     typeDefs,
