@@ -27,6 +27,7 @@ export const mutations = {
 
     updateChannel: async (parent, args, context, info) => {
         const {input, channelId} = args;
+        console.log("updateChannel", {input, channelId})
         if (!input || !channelId) {
             throw new Error("property input or channelId missing");
         }

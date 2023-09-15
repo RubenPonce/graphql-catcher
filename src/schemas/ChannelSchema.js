@@ -12,7 +12,7 @@ export const ChannelSchema = new Schema({
         type: String,
         required: false,
     },
-    status: { // will be updated with poller of data.
+    status: {
         live: {
             isLive: {type: Boolean, default: false},
             title: {type: String, default: ""},
@@ -24,13 +24,11 @@ export const ChannelSchema = new Schema({
             mediaProviderForBan: {type: String, default: ""},
         },
     },
-    //platform that the live was streamed on
     socials: [{
         name: {type: String, required: true},
         url: {type: String, required: true},
         channelId: {type: String, required: false},
     }],
-    //uplosded content
     content: [{
         title: {type: String, required: true},
         url: {type: String, required: true},
